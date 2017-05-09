@@ -1,4 +1,6 @@
 const electron = require('electron')
+const ipcMain = electron.ipcMain;
+const dialog = electron.dialog;
 // Module to control application life.
 const app = electron.app
 // Module to create native browser window.
@@ -54,6 +56,34 @@ app.on('activate', function () {
   if (mainWindow === null) {
     createWindow()
   }
+})
+
+ipcMain.on('PromptToCreateOpenDirectory', (event) => {
+  let dialogOptions = {
+    title: "Select photo folder:",
+    properties: ['openDirectory','promptToCreate'],
+    //for defaultPaths escape backslashes.
+  };
+  let selectedPath = dialog.showOpenDialog(mainWindow, dialogOptions);
+  if(selectedPath == undefined) {
+    selectedPath = [];
+    selectedPath[0] = null
+  }
+  event.returnValue = selectedPath[0];
+})
+
+ipcMain.on('PromptToCreate', (event) => {
+  let dialogOptions = {
+    title: "Select photo folder:",
+    properties: ['promptToCreate'],
+    //for defaultPaths escape backslashes.
+  };
+  let selectedPath = dialog.showOpenDialog(mainWindow, dialogOptions);
+  if(selectedPath == undefined) {
+    selectedPath = [];
+    selectedPath[0] = null
+  }
+  event.returnValue = selectedPath[0];
 })
 
 // In this file you can include the rest of your app's specific main process
